@@ -1,37 +1,108 @@
+'use client'
+import * as tf from '@tensorflow/tfjs'
+import * as handpose from '@tensorflow-models/handpose'
+import * as fp from 'fingerpose'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import Webcam from 'react-webcam'
 
 import Footer from '@/components/Footer'
 import HorizontalCarousel from '@/components/HorizontalCarousel'
 import Image_DescriptionBtn from '@/components/Image_DescriptionBtn'
 import Navbar from '@/components/Navbar'
+import { gestureA } from '@/components/videoML/a'
+import { loveYouGesture } from '@/components/videoML/LoveYou'
+import { drawHand } from '@/components/videoML/utilities'
 
 export default function Index() {
-  useEffect(() => {
-    function adjustAbsoluteDivHeight() {
-      const absoluteDiv = document.getElementById('lines')
-      const absoluteDiv1 = document.getElementById('lines1')
-      const absoluteDiv2 = document.getElementById('lines2')
-      const absoluteDiv3 = document.getElementById('lines3')
-      const absoluteDiv4 = document.getElementById('lines4')
-      const bodyHeight = document.body.scrollHeight
-      console.log(bodyHeight)
-      absoluteDiv.style.height = `${bodyHeight}px`
-      absoluteDiv1.style.height = `${bodyHeight}px`
-      absoluteDiv2.style.height = `${bodyHeight}px`
-      absoluteDiv3.style.height = `${bodyHeight}px`
-      absoluteDiv4.style.height = `${bodyHeight}px`
-    }
-    setTimeout(() => {
-      adjustAbsoluteDivHeight()
-    }, 5000)
-    adjustAbsoluteDivHeight()
-    window.addEventListener('resize', adjustAbsoluteDivHeight)
+  const webcamRef = useRef(null)
+  const canvasRef = useRef(null)
 
-    return () => {
-      window.removeEventListener('resize', adjustAbsoluteDivHeight)
+  const [currname, setcurrName] = useState('Under Processing ...')
+
+  const runHandpose = async () => {
+    try {
+      const net = await handpose.load()
+      console.log('Handpose model loaded.')
+      // Continue with the rest of your code
+
+      const detectFrame = () => {
+        detect(net)
+        requestAnimationFrame(detectFrame)
+      }
+
+      detectFrame()
+    } catch (error) {
+      console.error('Error loading Handpose model:', error)
     }
+  }
+
+  const detect = async (net) => {
+    // Check data is available
+    if (typeof webcamRef.current !== 'undefined' && webcamRef.current !== null) {
+      // Get Video Properties
+      const video = webcamRef.current.video
+      const videoWidth = webcamRef.current.video.videoWidth
+      const videoHeight = webcamRef.current.video.videoHeight
+
+      // Set video width
+      webcamRef.current.video.width = videoWidth
+      webcamRef.current.video.height = videoHeight
+
+      // Set canvas height and width
+      canvasRef.current.width = videoWidth
+      canvasRef.current.height = videoHeight
+
+      // Make Detections
+      const hand = await net.estimateHands(video)
+      console.log(hand.length)
+
+      if (hand.length > 0) {
+        const GE = new fp.GestureEstimator([
+          fp.Gestures.VictoryGesture,
+          fp.Gestures.ThumbsUpGesture,
+          loveYouGesture,
+          gestureA,
+        ])
+        const gesture = await GE.estimate(hand[0].landmarks, 4)
+        if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
+          console.log(gesture.gestures)
+
+          const confidence = gesture.gestures.map((prediction) => prediction.confidence)
+          const maxConfidence = confidence.indexOf(Math.max.apply(null, confidence))
+          console.log(gesture.gestures[maxConfidence].name)
+          setcurrName(gesture.gestures[maxConfidence].name)
+        }
+      }
+
+      // Draw mesh
+      const ctx = canvasRef.current.getContext('2d')
+      drawHand(hand, ctx)
+    }
+  }
+
+  useEffect(() => {
+    runHandpose()
+    console.log('TryMonark')
+  }, [runHandpose])
+
+  useEffect(() => {
+    const runWebcam = async () => {
+      if (webcamRef.current !== null) {
+        const videoConstraints = {
+          width: 640,
+          height: 480,
+          facingMode: 'user', // or "environment" for rear camera
+        }
+
+        const mediaStream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints })
+        webcamRef.current.video.srcObject = mediaStream
+      }
+    }
+
+    runWebcam()
   }, [])
+
   return (
     <div className="background-styling">
       <Navbar />
@@ -47,16 +118,69 @@ export default function Index() {
 
       <section className="container-style flex flex-col mt-[200px] items-start z-[999] relative">
         <p className="text-h1 text-[#131313] pb-16">Saving the planet, one receipt at a time</p>
-        <Image
-          src="/png/Rectangle 623.png"
-          alt="Picture of the author"
-          width={1500}
-          height={500}
-          className="xl:w-[1200px]"
-        />
+        <div className="App w-[1500px] h-[500px] xl:w-[1200px]">
+          <header className="App-header">
+            <Webcam
+              ref={webcamRef}
+              style={{
+                position: 'absolute',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                left: 0,
+                right: 0,
+                textAlign: 'center',
+                zindex: 9,
+                width: 640,
+                height: 480,
+              }}
+            />
+
+            <canvas
+              ref={canvasRef}
+              style={{
+                position: 'absolute',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                left: 0,
+                right: 0,
+                textAlign: 'center',
+                zindex: 9,
+                width: 640,
+                height: 480,
+              }}
+            />
+            <div
+              style={{
+                zIndex: 10,
+              }}
+            ></div>
+
+            {/* NEW STUFF */}
+            {/* {emoji !== null ? (
+              <img
+                src={images[emoji]}
+                style={{
+                  position: "absolute",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  left: 400,
+                  bottom: 500,
+                  right: 0,
+                  textAlign: "center",
+                  height: 100,
+                }}
+              />
+            ) : (
+              ""
+            )} */}
+
+            {/* NEW STUFF */}
+          </header>
+        </div>
+        <h1 className="text-center w-full">{currname}</h1>
       </section>
 
-      <section className="container-style hidden md:flex shrink-0 lg:mt-56 md:mt-20 mdm:mt-20 z-[999] relative">
+      <section className="container-style hidden md:flex shrink-0 lg:mt-[200px] md:mt-20 z-[999] relative">
         <div className="flex w-full justify-between">
           <div className="lg:pr-12 nsm:pr-6 xl:w-[22%] lg:w-[22%] w-[23%]">
             <div className="text-[#0E72E8] text-subtitle-2 border-l-[2px] border-l-[#0E72E8] pl-8 w-auto">
@@ -390,27 +514,6 @@ export default function Index() {
       <section>
         <Footer />
       </section>
-
-      <div
-        id="lines"
-        className="w-[1px] absolute top-[0px] left-[3.6%] sm:left-[2.4%] md:left-[4%] xl:left-[18.1%] bg-[#0E72E8] bg-opacity-20 z-[10]"
-      ></div>
-      <div
-        id="lines1"
-        className="hidden md:block w-[1px] absolute top-[0px] md:left-[27.8%] xl:left-[34.7%] bg-[#0E72E8] bg-opacity-20 z-[10]"
-      ></div>
-      <div
-        id="lines2"
-        className="hidden md:block w-[1px] absolute top-[0px] md:left-[51.6%] xl:left-[51.2%] bg-[#0E72E8] bg-opacity-20 z-[10]"
-      ></div>
-      <div
-        id="lines3"
-        className="hidden md:block w-[1px] absolute top-[0px] md:left-[75.5%] xl:left-[67.65%] bg-[#0E72E8] bg-opacity-20 z-[10]"
-      ></div>
-      <div
-        id="lines4"
-        className="w-[1px] absolute top-[0px] left-[98%] md:left-[96.6%] xl:left-[82%] bg-[#0E72E8] bg-opacity-20 z-[10]"
-      ></div>
     </div>
   )
 }
