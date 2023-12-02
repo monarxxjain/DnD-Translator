@@ -11,6 +11,8 @@ import HorizontalCarousel from '@/components/HorizontalCarousel'
 import Image_DescriptionBtn from '@/components/Image_DescriptionBtn'
 import Navbar from '@/components/Navbar'
 import { gestureA } from '@/components/videoML/a'
+import { gesturePunch } from '@/components/videoML/b'
+import { gestureSmile } from '@/components/videoML/c'
 import { loveYouGesture } from '@/components/videoML/LoveYou'
 import { drawHand } from '@/components/videoML/utilities'
 
@@ -63,6 +65,8 @@ export default function Index() {
           fp.Gestures.ThumbsUpGesture,
           loveYouGesture,
           gestureA,
+          gesturePunch,
+          gestureSmile,
         ])
         const gesture = await GE.estimate(hand[0].landmarks, 4)
         if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
@@ -110,14 +114,14 @@ export default function Index() {
       <section className="mt-48 flex flex-col items-center">
         <Image_DescriptionBtn
           type="hero"
-          title="The smart digital receipt platform"
-          description="Lorem ipsum dolor sit amet consectetur. A facilisi luctus semper netus volutpat integer scelerisque sit velit. "
+          title="Empowering Communication through Video Calls"
+          description="Welcome to our platform, dedicated to enhancing communication for the deaf and dumb community. Break down barriers with seamless sign language translation during video calls."
           image="/png/Hero.png"
         />
       </section>
 
       <section className="container-style flex flex-col mt-[200px] items-start z-[999] relative">
-        <p className="text-h1 text-[#131313] pb-16">Saving the planet, one receipt at a time</p>
+        <p className="text-h1 text-[#131313] pb-16">Weave the signs below and let's start !!</p>
         <div className="App w-[1500px] h-[500px] xl:w-[1200px]">
           <header className="App-header">
             <Webcam
@@ -243,11 +247,11 @@ export default function Index() {
         </div>
       </section>
 
-      <div className="lg:mt-[50px] mdm:mt-24 mbm:mt-64 bg-big-rectangle-home z-[1] lg:pt-[900px] md:pt-[500px] sm:pt-[500px] mbm:pt-[550px] lg:top-[-700px] md:top-[-400px] mdm:top-[-590px] mdm:pt-[600px] mbm:top-[-720px] mb:top-[-660px] mtm:top-[-650px] relative xl:h-[4200px] lg:h-[390vw] sm:h-[4100px] mdm:h-[5300px] mtm:h-[4820px] mbm:h-[4700px] mb:h-[4900px] md:h-[3150px]">
+      <div className="lg:mt-[50px] mdm:mt-24 mbm:mt-64 bg-big-rectangle-home z-[1] lg:pt-[900px] md:pt-[500px] sm:pt-[500px] mbm:pt-[550px] lg:top-[-700px] md:top-[-400px] mdm:top-[-590px] mdm:pt-[600px] mbm:top-[-720px] mb:top-[-660px] mtm:top-[-650px] relative xl:h-[3000px] lg:h-[390vw] sm:h-[4100px] mdm:h-[5300px] mtm:h-[4820px] mbm:h-[4700px] mb:h-[4900px] md:h-[3150px]">
         <section className="z-[20]">
           <Image_DescriptionBtn
             type="hero"
-            title="The paperless revolution is here"
+            title="The kind revolution is here"
             description="The next generation digital receipts platform. Accelerate your ESG goals and unlock unrivalled insights and financial benefits."
             image="/png/IMG.png"
           />
@@ -255,13 +259,13 @@ export default function Index() {
         <section className="lg:mt-96 md:mt-40 sm:mt-56 mdm:mt-24">
           <Image_DescriptionBtn
             type="hero"
-            title="Seamless merchant & third party integration"
+            title="Seamless communication & API integration"
             description="TSeamless integration with POS systems. Secure and anonymous transmission of digital receipts from merchants to consumers, unlocking significant cost savings and a step forward in sustainability efforts"
             image="/png/IMG2.png"
           />
         </section>
 
-        <section className="container-style mt-[280px] mb-[100px] container-style mdm:mt-24">
+        {/* <section className="container-style mt-[280px] mb-[100px] container-style mdm:mt-24">
           <div className="flex flex-col justify-center">
             <p className="text-h2 text-[#131313]">
               Smart technology, helping you save<br></br> money
@@ -335,7 +339,7 @@ export default function Index() {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
       </div>
 
       <section className="bg-big-blue-home relative z-[999] pt-80 mb:pt-36 xl:mt-[-1230px] md:mt-[-840px] nsm:mt-[-730px] nlg:mt-[-125vw] ulg:mt-[-133vw] nxl:mt-[-143vw] lg:mt-[-110vw] sm:mt-[-900px] mdm:mt-[-1400px] mtm:mt-[-940px] nmd:mt-[-780px] mbm:mt-[-960px] mb:mt-[-930px] mb:h-auto mtm:h-auto mbm:h-auto sbm:h-auto">

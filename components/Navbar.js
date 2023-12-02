@@ -51,11 +51,11 @@ export default function Navbar() {
         <nav className="flex justify-between w-full text-header-mobile-sb transition-all">
           <section className="flex justify-between shrink-0">
             <Image
-              src="/png/logo.png"
+              src="/png/logoMain.png"
               alt="Picture of the author"
               width={180}
-              height={500}
-              className="lg:w-[180px] lg:h-[57px] w-[140px] h-[60px]"
+              height={200}
+              className="lg:w-[90px] lg:h-[90px] w-[140px] h-[60px]"
             />
             {/* <Image src="/png/logo.png" alt="Picture of the author" width={100} height={100} className='hidden md:block lg:hidden'/> */}
           </section>

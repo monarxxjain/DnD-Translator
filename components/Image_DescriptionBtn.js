@@ -11,12 +11,14 @@ export default function Image_DescriptionBtn({ type, title, description, image }
           {title}
         </div>
         <div className="text-body-regular text-[#404040] mt-10">{description}</div>
-        <button
-          type="button"
-          className="w-[40%] z-[999] flex pt-[19px] pr-[16px] lg:mt-[60px] md:mt-[35px] mdm:mt-10 pb-[20px] pl-[16px] justify-center items-center rounded-[10px] bg-[#0E72E8] text-[#F3F3F3] text-center text-[16px] font-bold not-italic lading-[150%] hover:bg-[#0C5CBC] active:bg-[#00489E]"
-        >
-          Get started
-        </button>
+        <a href="https://app.voxap.it/">
+          <button
+            type="button"
+            className="w-[40%] z-[999] flex pt-[19px] pr-[16px] lg:mt-[60px] md:mt-[35px] mdm:mt-10 pb-[20px] pl-[16px] justify-center items-center rounded-[10px] bg-[#0E72E8] text-[#F3F3F3] text-center text-[16px] font-bold not-italic lading-[150%] hover:bg-[#0C5CBC] active:bg-[#00489E]"
+          >
+            Get started
+          </button>
+        </a>
       </div>
 
       <div className="text-body-regular basis-6/12 shrink-0 flex justify-center">
